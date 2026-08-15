@@ -1,3 +1,9 @@
+# -----------------------------------------------------------------------------
+# Created by: Ravi Kuar Singh
+# Executive Hotel Analytics Dashboard (Streamlit)
+# Repository: https://github.com/coderravi0101/Hotel-Booking
+# -----------------------------------------------------------------------------
+
 import os
 import streamlit as st
 import pandas as pd
@@ -224,7 +230,7 @@ with tab1:
         monthly = filtered.groupby(["arrival_date_month", "arrival_date_year"], observed=False).size().reset_index(name="bookings")
         fig = px.bar(
             monthly, x="arrival_date_month", y="bookings", color="arrival_date_year",
-            title="Monthly Bookings by Year", barmode="group", category_orders={"arrival_date_month": list(filtered["arrival_date_month"].cat.categories) if "arrival_date_month" in filtered.columns else []}
+            title="Monthly Bookings by Year", barmode="group", category_orders={"arrival_date_month": list(filtered["arrival_date_month"].cat.categories) if "arrival_date_month" in filtered.columns el[...]
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -365,12 +371,14 @@ with tab5:
 st.markdown("---")
 st.markdown(
     "<div style='text-align:center; color:gray; font-size:12px;'>"
-    "Enterprise Hotel Revenue Analytics System • Built with Streamlit & Plotly • Prod-Ready UX" 
+    "Enterprise Hotel Revenue Analytics System • Built with Streamlit & Plotly • Prod-Ready UX • Created by Ravi Kuar Singh"
     "</div>", unsafe_allow_html=True
 )
 
 # Helpful tip for deployments
 st.sidebar.markdown("""
+**Created by:** **Ravi Kuar Singh**  
+
 **Deployment tips:**
 - Set HOTEL_DATA_PATH env var on the server or upload the CSV in the UI.
 - Use a requirements.txt and pin package versions for reproducible deploys.
