@@ -228,9 +228,17 @@ with tab1:
     with col1:
         # Monthly seasonality (counts) + stacked by year
         monthly = filtered.groupby(["arrival_date_month", "arrival_date_year"], observed=False).size().reset_index(name="bookings")
+        category_orders = {
+            "arrival_date_month": list(filtered["arrival_date_month"].cat.categories)
+        } if "arrival_date_month" in filtered.columns else {}
         fig = px.bar(
-            monthly, x="arrival_date_month", y="bookings", color="arrival_date_year",
-            title="Monthly Bookings by Year", barmode="group", category_orders={"arrival_date_month": list(filtered["arrival_date_month"].cat.categories) if "arrival_date_month" in filtered.columns el[...]
+            monthly,
+            x="arrival_date_month",
+            y="bookings",
+            color="arrival_date_year",
+            title="Monthly Bookings by Year",
+            barmode="group",
+            category_orders=category_orders
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -313,7 +321,15 @@ with tab3:
     with col1:
         country_df = filtered["country"].value_counts().reset_index()
         country_df.columns = ["country","bookings"]
-        fig_map = px.choropleth(country_df, locations="country", locationmode='country names', color="bookings", hover_name="country", color_continuous_scale="Viridis", title="Global Booking Density")
+        fig_map = px.choropleth(
+            country_df,
+            locations="country",
+            locationmode='country names',
+            color="bookings",
+            hover_name="country",
+            color_continuous_scale="Viridis",
+            title="Global Booking Density"
+        )
         st.plotly_chart(fig_map, use_container_width=True)
 
     with col2:
