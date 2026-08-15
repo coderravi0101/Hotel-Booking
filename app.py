@@ -49,12 +49,13 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------- 2. Data Loading & Cleaning ----------------
-DATA_PATH = Path(__file__).parent / "Hotel Bookings.csv"
+# Prefer a local Windows path on the developer machine; fallback to file uploader for portability
+DEFAULT_DATA_PATH = Path(r"D:\Hotel Booking EDA Machine Learning Project\Hotel Bookings.csv")
 
 @st.cache_data
-def load_data():
-    df = pd.read_csv(DATA_PATH)
-    
+def load_data(path_or_buffer):
+    df = pd.read_csv(path_or_buffer)
+
     # Missing value handling
     df["children"] = df.get("children", pd.Series(0)).fillna(0)
     df["country"] = df.get("country", pd.Series("Unknown")).fillna("Unknown")
@@ -89,13 +90,21 @@ def load_data():
     )
     # Revenue calculations for confirmed bookings only
     df["estimated_revenue"] = df.apply(
-        lambda row: row["adr"] * row["total_nights"] if row["is_canceled"] == 0 else 0, 
+        lambda row: row.get("adr", 0) * row.get("total_nights", 0) if row.get("is_canceled", 0) == 0 else 0,
         axis=1
     )
     return df
 
+# Try to load from the default path first; if not present, ask user to upload
 try:
-    df = load_data()
+    if DEFAULT_DATA_PATH.exists():
+        df = load_data(DEFAULT_DATA_PATH)
+    else:
+        st.info(f"Default dataset not found at {DEFAULT_DATA_PATH}. Please upload the 'Hotel Bookings.csv' file.")
+        uploaded = st.file_uploader("Upload Hotel Bookings CSV", type=["csv"])
+        if uploaded is None:
+            st.stop()
+        df = load_data(uploaded)
 except Exception as e:
     st.error(f"⚠️ Failed to load dataset: {e}")
     st.stop()
