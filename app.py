@@ -270,10 +270,36 @@ with tab2:
         # Cancellation over time if arrival_date exists
         if "arrival_date" in filtered.columns and filtered["arrival_date"].notna().any():
             cancel_ts = filtered.copy()
+            # Ensure arrival_date is proper datetime values
             cancel_ts["arrival_date"] = pd.to_datetime(cancel_ts["arrival_date"], errors="coerce")
-            cancel_rate_ts = cancel_ts.groupby(pd.Grouper(key="arrival_date", freq="M"))["is_canceled"].mean().mul(100).rename("cancel_rate").reset_index()
-            fig_ct = px.line(cancel_rate_ts, x="arrival_date", y="cancel_rate", title="Monthly Cancellation Rate (%)")
-            st.plotly_chart(fig_ct, use_container_width=True)
+
+            # If there are no valid datetimes after coercion, show info and skip plotting
+            if cancel_ts["arrival_date"].dropna().empty:
+                st.info("No valid arrival_date values to compute cancellation rate over time.")
+            else:
+                try:
+                    # Preferred: use resample on a datetime index which is robust across pandas versions
+                    cancel_rate_ts = (
+                        cancel_ts.dropna(subset=["arrival_date"]) 
+                        .set_index("arrival_date")
+                        .resample("M")["is_canceled"]
+                        .mean()
+                        .mul(100)
+                        .rename("cancel_rate")
+                        .reset_index()
+                    )
+                except Exception:
+                    # Fallback: group by year-month via dt.to_period (avoids pd.Grouper/freq parsing differences)
+                    cancel_rate_ts = (
+                        cancel_ts.dropna(subset=["arrival_date"]).assign(
+                            arrival_month=cancel_ts["arrival_date"].dt.to_period("M").dt.to_timestamp()
+                        )
+                        .groupby("arrival_month")["is_canceled"].mean().mul(100).rename("cancel_rate").reset_index()
+                    )
+                    cancel_rate_ts = cancel_rate_ts.rename(columns={"arrival_month":"arrival_date"})
+
+                fig_ct = px.line(cancel_rate_ts, x="arrival_date", y="cancel_rate", title="Monthly Cancellation Rate (%)")
+                st.plotly_chart(fig_ct, use_container_width=True)
 
 with tab3:
     st.subheader("Geography & Demographics")
