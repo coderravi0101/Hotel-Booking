@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# Created by: Ravi Kuar Singh
+# Created by: Ravi Kumar Singh
 # Executive Hotel Analytics Dashboard (Streamlit)
 # Repository: https://github.com/coderravi0101/Hotel-Booking
 # -----------------------------------------------------------------------------
@@ -371,13 +371,13 @@ with tab5:
 st.markdown("---")
 st.markdown(
     "<div style='text-align:center; color:gray; font-size:12px;'>"
-    "Enterprise Hotel Revenue Analytics System • Built with Streamlit & Plotly • Prod-Ready UX • Created by Ravi Kuar Singh"
+    "Enterprise Hotel Revenue Analytics System • Built with Streamlit & Plotly • Prod-Ready UX • Created by Ravi Kumar Singh"
     "</div>", unsafe_allow_html=True
 )
 
 # Helpful tip for deployments
 st.sidebar.markdown("""
-**Created by:** **Ravi Kuar Singh**  
+**Created by:** **Ravi Kumar Singh**  
 
 **Deployment tips:**
 - Set HOTEL_DATA_PATH env var on the server or upload the CSV in the UI.
